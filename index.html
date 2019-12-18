@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<iframe src="frame.html" id="myiframe">
+  <p>Your browser does not support iframes.</p>
+</iframe>
+
+<h2>Buttons</h2>
+<button type="button" onclick="console.log('Check value outside iframe: ' + navigator.webdriver);">Check value outside iframe.</button>
+
+<button type="button" onclick="var i2 = document.getElementById('myiframe'); console.log('Check value in included iframe (loaded at start): ' + i2.contentWindow.navigator.webdriver);">Check value in included iframe (loaded at start).</button>
+
+<button type="button" onclick="var i = document.createElement('iframe'); document.body.appendChild(i); console.log('Create iframe and check value in it: ' + i.contentWindow.navigator.webdriver);">Create iframe and check value in it.</button>
+
+</body>
+</html>
