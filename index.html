@@ -1,17 +1,75 @@
 <!DOCTYPE html>
-<html>
-<body>
-
-<iframe src="frame.html" id="myiframe">
-  <p>Your browser does not support iframes.</p>
-</iframe>
-
-<h2>Buttons</h2>
-<button type="button" onclick="console.log('Check value outside iframe: ' + navigator.webdriver);">Check value outside iframe.</button>
-
-<button type="button" onclick="var i2 = document.getElementById('myiframe'); console.log('Check value in included iframe (loaded at start): ' + i2.contentWindow.navigator.webdriver);">Check value in included iframe (loaded at start).</button>
-
-<button type="button" onclick="var i = document.createElement('iframe'); document.body.appendChild(i); console.log('Create iframe and check value in it: ' + i.contentWindow.navigator.webdriver);">Create iframe and check value in it.</button>
-
-</body>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>webdriver-testpage</title>
+		<script type="text/javascript">
+			/*
+			 * Add a result to the specified HTML list.
+			 */
+			function addResult(listId, text) {
+				var li = document.createElement("li");
+				li.appendChild(document.createTextNode(text));
+				document.getElementById(listId).appendChild(li);
+			}
+		</script>
+	</head>
+	<body>
+		<iframe src="frame.html" id="staticIframe">
+			<p>Your browser does not support iframes.</p>
+		</iframe>
+		<h2>Results:</h2>
+		<p id="infoText">The values for `window.navigator.</p>
+		<ul id="resList">
+		</ul>
+		<script type="text/javascript">
+			/*
+			 * Credits for tests: Alexander Schlarb, see https://gitlab.com/ntninja/user-agent-switcher/issues/9
+			 */
+			let listId = "resList";
+			let property = "webdriver"; // The `window.navigator` property to investigate, in string form
+			document.getElementById("infoText").textContent += property + "` in the different contexts are:";
+			// 1. Instant checks
+			// a) Standard access
+			addResult(listId, "`" + window.navigator[property] + "`: Instant check, standard access");
+			// b) Static iframe
+			addResult(listId, "`" + window.frames[0].navigator[property] + "`: Instant check, static iframe (window.frames[0])"); // `window.frames[0]` points to frame.html
+			addResult(listId, "`" + window[0].navigator[property] + "`: Instant check, static iframe (window[0])"); // `window[0]` points to frame.html
+			addResult(listId, "`" + document.getElementById("staticIframe").contentWindow.navigator[property] + "`: Instant check, static iframe (.contentWindow)");
+			// c) Dynamic iframe
+			let dynIframe = document.createElement("iframe");
+			document.body.appendChild(dynIframe);
+			dynIframe.src = "javascript:void(document.body.appendChild(document.createElement(\"iframe\")));"; // Create and add a nested iframe inside `dynIframe`
+			addResult(listId, "`" + window.frames[1].navigator[property] + "`: Instant check, dynamically created iframe (window.frames[1])"); // `window.frames[1]` points to dynamically created iframe
+			addResult(listId, "`" + window[1].navigator[property] + "`: Instant check, dynamically created iframe (window[1])"); // `window[1]` points to dynamically created iframe
+			addResult(listId, "`" + dynIframe.contentWindow.navigator[property] + "`: Instant check, dynamically created iframe (.contentWindow)");
+			// d) Nested dynamic iframe
+			dynIframe.contentWindow.addEventListener("DOMContentLoaded", () => { // Wait with further execution until `dynIframe` has executed its JavaScript completely
+				let dynNestedIframe = dynIframe.contentWindow.document.body.getElementsByTagName("iframe")[0];
+				addResult(listId, "`" + dynNestedIframe.contentWindow.navigator[property] + "`: Instant check, dynamically created NESTED iframe (.contentWindow)");
+				// e) New pop-up window method
+				try {
+					let str = window.open('').navigator[property];
+					addResult(listId, "`" + str + "`: Instant check, window.open('')");
+				} catch (e) {
+					addResult(listId, "NONE: Instant check, window.open('') FAILED (most probably pop-up windows are forbidded by default in your browser)");
+				}
+				// 2. Delayed checks
+				window.setTimeout(() => {
+					// a) Standard access
+					addResult(listId, "`" + window.navigator[property] + "`: Delayed check, standard access");
+					// b) Static iframe
+					addResult(listId, "`" + window.frames[0].navigator[property] + "`: Delayed check, static iframe (window.frames[0])"); // `window.frames[0]` points to frame.html
+					addResult(listId, "`" + window[0].navigator[property] + "`: Delayed check, static iframe (window[0])"); // `window[0]` points to frame.html
+					addResult(listId, "`" + document.getElementById("staticIframe").contentWindow.navigator[property] + "`: Delayed check, static iframe (.contentWindow)");
+					// c) Dynamic iframe
+					addResult(listId, "`" + window.frames[1].navigator[property] + "`: Delayed check, dynamically created iframe (window.frames[1])"); // `window.frames[1]` points to dynamically created iframe
+					addResult(listId, "`" + window[1].navigator[property] + "`: Delayed check, dynamically created iframe (window[1])"); // `window[1]` points to dynamically created iframe
+					addResult(listId, "`" + dynIframe.contentWindow.navigator[property] + "`: Delayed check, dynamically created iframe (.contentWindow)");
+					// d) Nested dynamic iframe
+					addResult(listId, "`" + dynNestedIframe.contentWindow.navigator[property] + "`: Delayed check, dynamically created NESTED iframe (.contentWindow)");
+				}, 500);
+			});
+		</script>
+	</body>
 </html>
