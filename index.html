@@ -33,15 +33,15 @@
 			// a) Standard access
 			addResult(listId, "`" + window.navigator[property] + "`: Instant check, standard access");
 			// b) Static iframe
-			addResult(listId, "`" + window.frames[0].navigator[property] + "`: Instant check, static iframe (window.frames[0])"); // `window.frames[0]` points to frame.html
 			addResult(listId, "`" + window[0].navigator[property] + "`: Instant check, static iframe (window[0])"); // `window[0]` points to frame.html
+			addResult(listId, "`" + window.frames[0].navigator[property] + "`: Instant check, static iframe (window.frames[0])"); // `window.frames[0]` points to frame.html
 			addResult(listId, "`" + document.getElementById("staticIframe").contentWindow.navigator[property] + "`: Instant check, static iframe (.contentWindow)");
 			// c) Dynamic iframe
 			let dynIframe = document.createElement("iframe");
 			document.body.appendChild(dynIframe);
 			dynIframe.src = "javascript:void(document.body.appendChild(document.createElement(\"iframe\")));"; // Create and add a nested iframe inside `dynIframe`
-			addResult(listId, "`" + window.frames[1].navigator[property] + "`: Instant check, dynamically created iframe (window.frames[1])"); // `window.frames[1]` points to dynamically created iframe
 			addResult(listId, "`" + window[1].navigator[property] + "`: Instant check, dynamically created iframe (window[1])"); // `window[1]` points to dynamically created iframe
+			addResult(listId, "`" + window.frames[1].navigator[property] + "`: Instant check, dynamically created iframe (window.frames[1])"); // `window.frames[1]` points to dynamically created iframe
 			addResult(listId, "`" + dynIframe.contentWindow.navigator[property] + "`: Instant check, dynamically created iframe (.contentWindow)");
 			// d) Nested dynamic iframe
 			dynIframe.contentWindow.addEventListener("DOMContentLoaded", () => { // Wait with further execution until `dynIframe` has executed its JavaScript completely
@@ -59,12 +59,12 @@
 					// a) Standard access
 					addResult(listId, "`" + window.navigator[property] + "`: Delayed check, standard access");
 					// b) Static iframe
-					addResult(listId, "`" + window.frames[0].navigator[property] + "`: Delayed check, static iframe (window.frames[0])"); // `window.frames[0]` points to frame.html
 					addResult(listId, "`" + window[0].navigator[property] + "`: Delayed check, static iframe (window[0])"); // `window[0]` points to frame.html
+					addResult(listId, "`" + window.frames[0].navigator[property] + "`: Delayed check, static iframe (window.frames[0])"); // `window.frames[0]` points to frame.html
 					addResult(listId, "`" + document.getElementById("staticIframe").contentWindow.navigator[property] + "`: Delayed check, static iframe (.contentWindow)");
 					// c) Dynamic iframe
-					addResult(listId, "`" + window.frames[1].navigator[property] + "`: Delayed check, dynamically created iframe (window.frames[1])"); // `window.frames[1]` points to dynamically created iframe
 					addResult(listId, "`" + window[1].navigator[property] + "`: Delayed check, dynamically created iframe (window[1])"); // `window[1]` points to dynamically created iframe
+					addResult(listId, "`" + window.frames[1].navigator[property] + "`: Delayed check, dynamically created iframe (window.frames[1])"); // `window.frames[1]` points to dynamically created iframe
 					addResult(listId, "`" + dynIframe.contentWindow.navigator[property] + "`: Delayed check, dynamically created iframe (.contentWindow)");
 					// d) Nested dynamic iframe
 					addResult(listId, "`" + dynNestedIframe.contentWindow.navigator[property] + "`: Delayed check, dynamically created NESTED iframe (.contentWindow)");
